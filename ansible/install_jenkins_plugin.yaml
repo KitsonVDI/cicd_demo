@@ -1,0 +1,18 @@
+---
+- name: Install plugin
+  hosts: Jenkins
+  become: true
+  tasks:
+    - name: Install docker plugin
+      community.docker.docker_container_exec:
+        container: jenkins-master
+        command: "jenkins-plugin-cli --plugins docker-plugin:1.6 "
+    - name: copy docker plugin
+      community.docker.docker_container_exec:
+        container: jenkins-master
+        command: " cp -r -p /usr/share/jenkins/ref/plugins/. /var/jenkins_home/plugins/."
+    - name: Restart jenkins docker
+      community.docker.docker_container:
+        name: jenkins-master
+        state: started
+        restart: true
